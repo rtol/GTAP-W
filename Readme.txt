@@ -1,5 +1,5 @@
 =========================================================================================================
-"The GTAP-W Model: Accounting for Water Use in Agriculture”
+"The GTAP-W Model: Accounting for Water Use in Agricultureâ€
 
 Alvaro Calzadilla (a,*), Katrin Rehdanz (a,b) and Richard S.J. Tol (c,d,e,f)
 
@@ -13,21 +13,22 @@ Alvaro Calzadilla (a,*), Katrin Rehdanz (a,b) and Richard S.J. Tol (c,d,e,f)
     Tel.: 49 431 8814 401; fax: 49 431 8814 500. E-mail address: alvaro.calzadilla@ifw-kiel.de
 =========================================================================================================
 
+This model was used in https://www.sciencedirect.com/science/article/pii/S0022169409007902, https://onlinelibrary.wiley.com/doi/full/10.1111/j.1574-0862.2010.00516.x and https://link.springer.com/article/10.1007/s10584-013-0822-4
 
 ==================
 Files description:
 ==================
-- “SplitLand.tab” TABLO file to split "land" into "PsLand", "RfLand", "Lnd" and "Wtr" 
-- “SplitLand.sti” Stored-input file to split "land" into "PsLand", "RfLand", "Lnd" and "Wtr"
-- “extradata.har” Shares to split land and new elasticities
-- “Gtap-Water.tab” GTAP-W code
-- “Gtap-Water.sti” Stores-input file to run GTAP-W
-- “basedata.har” GTAP-W database
-- “default.prm” GTAP-W parameters
-- “sets.har” GTAP-W sets
-- “Efficiency S1.cmf” Shocks for the water-scarce developing regions scenario
-- “Efficiency S2.cmf” Shocks for the water-scarce regions scenario
-- “Efficiency S3.cmf” Shocks for the all regions scenario
+- â€œSplitLand.tabâ€ TABLO file to split "land" into "PsLand", "RfLand", "Lnd" and "Wtr" 
+- â€œSplitLand.stiâ€ Stored-input file to split "land" into "PsLand", "RfLand", "Lnd" and "Wtr"
+- â€œextradata.harâ€ Shares to split land and new elasticities
+- â€œGtap-Water.tabâ€ GTAP-W code
+- â€œGtap-Water.stiâ€ Stores-input file to run GTAP-W
+- â€œbasedata.harâ€ GTAP-W database
+- â€œdefault.prmâ€ GTAP-W parameters
+- â€œsets.harâ€ GTAP-W sets
+- â€œEfficiency S1.cmfâ€ Shocks for the water-scarce developing regions scenario
+- â€œEfficiency S2.cmfâ€ Shocks for the water-scarce regions scenario
+- â€œEfficiency S3.cmfâ€ Shocks for the all regions scenario
 
 
 =====================================
