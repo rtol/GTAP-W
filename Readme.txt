@@ -13,7 +13,7 @@ Alvaro Calzadilla (a,*), Katrin Rehdanz (a,b) and Richard S.J. Tol (c,d,e,f)
     Tel.: 49 431 8814 401; fax: 49 431 8814 500. E-mail address: alvaro.calzadilla@ifw-kiel.de
 =========================================================================================================
 
-This model was used in https://www.sciencedirect.com/science/article/pii/S0022169409007902, https://onlinelibrary.wiley.com/doi/full/10.1111/j.1574-0862.2010.00516.x and https://link.springer.com/article/10.1007/s10584-013-0822-4
+This model was used in [Calzadilla et al., 2010, J Hydrology](https://www.sciencedirect.com/science/article/pii/S0022169409007902), [Calzadilla et al., 2010, Agricultural Economics](https://onlinelibrary.wiley.com/doi/full/10.1111/j.1574-0862.2010.00516.x) and [Calzadilla et al., 2013, Climatic Change](https://link.springer.com/article/10.1007/s10584-013-0822-4).
 
 ==================
 Files description:
