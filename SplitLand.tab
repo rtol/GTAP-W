@@ -1,0 +1,190 @@
+!***************************************************************************!
+!                      SPLITLAND.TAB  for GTAP-Water                        !
+!                                                                           !
+!                  Split Land for GTAP-Water - version 1                    !
+!                                                                           !
+!              Created by Alvaro Calzadilla      November 2007              !
+!                                                                           !
+!***************************************************************************!
+
+
+!INPUT FILES!
+
+File SETS # Original file with set specification # ;
+File PARM # Original file containing all parameters # ;
+File DATA # Original file containing all base data # ;
+File EXTR # Extra file containing coefficients used to split land # ;
+File (new) NEWSETS # File containing new sets data # ;
+File (new) NEWPARM # File containing new parameters data # ;
+File (new) NEWDATA # File containing new base data # ;
+
+
+!DEFINING SETS!
+
+Set ENDW_OLD # Old endowment commodities #
+    (Land,Lab,Capital,NatlRes) ;
+Set REG # Regions in the model #
+    maximum size 20 read elements from file SETS header "H1" ;
+Set TRAD_COMM # Traded commodities #
+    maximum size 20 read elements from file SETS header "H2" ;
+Set CGDS_COMM # Capital goods commodities #
+    maximum size  1 read elements from file SETS header "H9" ;
+Set PROD_COMM # Produced commodities # = TRAD_COMM union CGDS_COMM ;
+
+Set ENDW_COMM # New endowment commodities #
+    (Wtr,Lnd,RfLand,PsLand,Lab,Capital,NatlRes) ;
+
+Set NSPLIT_ENDW # No Splited factors #
+    (Lab,Capital,NatlRes) ;
+Subset NSPLIT_ENDW is subset of ENDW_OLD ;
+Subset NSPLIT_ENDW is subset of ENDW_COMM ;
+
+
+!READING DATA!
+
+!> Paramenters!
+
+Coefficient (Parameter)(all,i,ENDW_OLD)
+    OLDETRAE(i) # Old ETRE # ;
+Read OLDETRAE from file PARM header "ETRE" ;
+
+Coefficient (Integer) (all,i,ENDW_OLD)
+    OLDSLUG(i) # Old SLUG # ;
+Read OLDSLUG from file PARM header "SLUG" ;
+
+!> Extradata!
+
+Coefficient (all,j,PROD_COMM)(all,r,REG)            
+    PSLD(j,r) # Extra data for split pasture land # ;
+Read PSLD from file EXTR header "PSLD" ;
+
+Coefficient (all,j,PROD_COMM)(all,r,REG)            
+    RFLD(j,r) # Extra data for split rainfed land # ;
+Read RFLD from file EXTR header "RFLD" ;
+
+Coefficient (all,j,PROD_COMM)(all,r,REG)            
+    IRLD(j,r) # Extra data for split irrigated land # ;
+Read IRLD from file EXTR header "IRLD" ;
+
+!> Basedata!
+
+Coefficient (ge 0)(all,i,ENDW_OLD)(all,j,PROD_COMM)(all,r,REG)
+    OLDVFM(i,j,r) # Old VFM # ;
+Read OLDVFM from file DATA header "VFM" ;
+
+Coefficient (all,i,ENDW_OLD)(all,j,PROD_COMM)(all,r,REG)            
+    OLDEVFA(i,j,r) # Old EVFA # ;
+Read OLDEVFA from file DATA header "EVFA" ;
+
+Coefficient (ge 0)(all,i,ENDW_OLD)(all,r,REG)
+    OLDEVOA(i,r) # Old EVOA # ;
+Read OLDEVOA from file DATA header "EVOA" ;
+
+
+!SPLITTING LAND!
+
+!> Paramenters!
+
+Coefficient (Parameter)(all,i,ENDW_COMM) ETRAE(i) # New ETRE # ;
+Formula ETRAE("Wtr") = OLDETRAE("Land") ;
+Formula ETRAE("Lnd") = OLDETRAE("Land") ;
+Formula ETRAE("RfLand") = OLDETRAE("Land") ;
+Formula ETRAE("PsLand") = OLDETRAE("Land") ;
+Formula (all,i,NSPLIT_ENDW) ETRAE(i) = OLDETRAE(i) ;
+
+Coefficient (Integer)(all,i,ENDW_COMM) SLUG(i) # New SLUG # ;
+Formula SLUG("Wtr") = OLDSLUG("Land") ;
+Formula SLUG("Lnd") = OLDSLUG("Land") ;
+Formula SLUG("RfLand") = OLDSLUG("Land") ;
+Formula SLUG("PsLand") = OLDSLUG("Land") ;
+Formula (all,i,NSPLIT_ENDW) SLUG(i) = OLDSLUG(i) ;
+
+!> Basedata!
+
+Coefficient (all,i,ENDW_COMM)(all,j,PROD_COMM)(all,r,REG)            
+    VFM(i,j,r) # New VFM # ;
+Formula (all,j,PROD_COMM)(all,r,REG)
+    VFM("Wtr",j,r) = OLDVFM("Land",j,r)
+                      *(0+IF(IRLD(j,r)>0,((IRLD(j,r)-1)/IRLD(j,r))))
+                      *(1-RFLD(j,r)) ;
+Formula (all,j,PROD_COMM)(all,r,REG)
+    VFM("Lnd",j,r) = OLDVFM("Land",j,r)
+                      *(0+IF(IRLD(j,r)>0,1/IRLD(j,r)))
+                      *(1-RFLD(j,r)) ;
+Formula (all,j,PROD_COMM)(all,r,REG)
+    VFM("RfLand",j,r) = OLDVFM("Land",j,r)*RFLD(j,r) ;
+Formula (all,j,PROD_COMM)(all,r,REG)
+    VFM("PsLand",j,r) = OLDVFM("Land",j,r)*PSLD(j,r) ;
+Formula (all,i,NSPLIT_ENDW)(all,j,PROD_COMM)(all,r,REG)
+    VFM(i,j,r) = OLDVFM(i,j,r) ;
+
+Coefficient (all,i,ENDW_OLD)(all,j,PROD_COMM)(all,r,REG)
+    OLDETAX(i,j,r) # Old ETAX # ;
+Formula (all,i,ENDW_OLD)(all,j,PROD_COMM)(all,r,REG)
+    OLDETAX(i,j,r) = OLDEVFA(i,j,r) - OLDVFM(i,j,r) ;
+
+Coefficient (all,i,ENDW_COMM)(all,j,PROD_COMM)(all,r,REG)            
+    EVFA(i,j,r) # New VFM # ;
+Formula (all,j,PROD_COMM)(all,r,REG)
+    EVFA("Wtr",j,r) = VFM("Wtr",j,r)
+                     + OLDETAX("Land",j,r)*VFM("Wtr",j,r)/OLDVFM("Land",j,r) ;
+Formula (all,j,PROD_COMM)(all,r,REG)
+    EVFA("Lnd",j,r) = VFM("Lnd",j,r)
+                     + OLDETAX("Land",j,r)*VFM("Lnd",j,r)/OLDVFM("Land",j,r) ;
+Formula (all,j,PROD_COMM)(all,r,REG)
+    EVFA("RfLand",j,r) = VFM("RfLand",j,r)
+                  + OLDETAX("Land",j,r)*VFM("RfLand",j,r)/OLDVFM("Land",j,r) ;
+Formula (all,j,PROD_COMM)(all,r,REG)
+    EVFA("PsLand",j,r) = VFM("PsLand",j,r)
+                  + OLDETAX("Land",j,r)*VFM("PsLand",j,r)/OLDVFM("Land",j,r) ;
+Formula (all,i,NSPLIT_ENDW)(all,j,PROD_COMM)(all,r,REG)
+    EVFA(i,j,r) = VFM(i,j,r)+OLDETAX(i,j,r) ;
+
+Coefficient (all,i,ENDW_OLD)(all,r,REG)
+    OLDPTAX(i,r) # Old PTAX # ;
+Formula (all,i,ENDW_OLD)(all,r,REG)
+    OLDPTAX(i,r) = sum(j,PROD_COMM, OLDVFM(i,j,r)) - OLDEVOA(i,r) ;
+
+Coefficient (all,i,ENDW_COMM)(all,r,REG)
+    EVOA(i,r) # New EVOA # ;
+Formula (all,r,REG)
+    EVOA("Wtr",r) = sum(j,PROD_COMM, VFM("Wtr",j,r)) - OLDPTAX("Land",r)
+    *sum(j,PROD_COMM, VFM("Wtr",j,r))/sum(j,PROD_COMM, OLDVFM("Land",j,r)) ;
+Formula (all,r,REG)
+    EVOA("Lnd",r) = sum(j,PROD_COMM, VFM("Lnd",j,r)) - OLDPTAX("Land",r)
+    *sum(j,PROD_COMM, VFM("Lnd",j,r))/sum(j,PROD_COMM, OLDVFM("Land",j,r)) ;
+Formula (all,r,REG)
+    EVOA("RfLand",r) = sum(j,PROD_COMM, VFM("RfLand",j,r)) - OLDPTAX("Land",r)
+    *sum(j,PROD_COMM, VFM("RfLand",j,r))/sum(j,PROD_COMM, OLDVFM("Land",j,r)) ;
+Formula (all,r,REG)
+    EVOA("PsLand",r) = sum(j,PROD_COMM, VFM("PsLand",j,r)) - OLDPTAX("Land",r)
+    *sum(j,PROD_COMM, VFM("PsLand",j,r))/sum(j,PROD_COMM, OLDVFM("Land",j,r)) ;
+Formula (all,i,NSPLIT_ENDW)(all,r,REG)
+    EVOA(i,r) = sum(j,PROD_COMM, VFM(i,j,r)) - OLDPTAX(i,r) ;
+
+
+!WRITING DATA!
+
+!> Sets!
+
+Write (Set) ENDW_COMM to file NEWSETS header "H6"
+    longname "Set ENDW_COMM  Endowment commodities" ;
+
+!> Paramenters!
+
+Write ETRAE to file NEWPARM header "ETRE"
+    longname "transformation elast. for sluggish factors" ;
+
+Write SLUG to file NEWPARM header "SLUG"
+    longname "sluggishness flag" ;
+
+!> Basedata!
+
+Write VFM to file NEWDATA header "VFM"
+      longname "Endowments - Firms' Purchases at Market Prices" ;
+Write EVFA to file NEWDATA header "EVFA"
+      longname "Endowments - Firms' Purchases at Agents' Prices" ;
+Write EVOA to file NEWDATA header "EVOA"
+      longname "Endowments - Output at Agents' Prices" ;
+
+!**********************************END**************************************!

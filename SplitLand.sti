@@ -1,0 +1,10 @@
+!  sti file for the programm SplitLand.tab !
+
+in\sets.har
+in\default.prm
+in\basedata.har
+in\extradata.har
+out\newsets.har
+out\newdefault.prm
+out\newbasedata.har
+
